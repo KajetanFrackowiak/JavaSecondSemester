@@ -20,9 +20,21 @@ public class MyController {
     }
 
     @PostMapping("cat/add")
-    public void addCat(
+    public void addCatToRepository(
             @RequestBody Cat cat) {
-        this.service.add(cat);
+        this.service.addCatToRepository(cat);
+    }
+
+    @PutMapping("/cat/update/{name}")
+    public void updateCatInRepository(@PathVariable String name, @RequestBody Cat updatedCat) {
+        service.updateCatByName(name, updatedCat);
+    }
+
+
+    @DeleteMapping("cat/delete/{name}")
+    public void deleteCatInRepository(
+            @PathVariable String name) {
+        this.service.deleteCatFromRepository(name);
     }
 
 }

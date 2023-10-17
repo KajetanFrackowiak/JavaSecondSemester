@@ -14,13 +14,32 @@ public class MyRestService {
     }
 
 
-
     public Cat getRepositoryByName(String name) {
         return this.repository.findByName(name);
     }
 
-    public void add(Cat cat) {
+    public void addCatToRepository(Cat cat) {
         repository.save(cat);
+    }
+
+    public void updateCatByName(String name, Cat updatedCat) {
+        Cat existingCat = repository.findByName(name);
+
+        if (existingCat != null) {
+            existingCat.setName(updatedCat.getName());
+            existingCat.setAge(updatedCat.getAge());
+
+            repository.save(existingCat);
+        }
+    }
+
+
+    public void deleteCatFromRepository(String name) {
+        Cat existingCat = repository.findByName(name);
+
+        if (existingCat != null) {
+            repository.delete(existingCat);
+        }
     }
 
 }
