@@ -18,9 +18,7 @@ public class Cat {
         this.name = name;
     }
 
-    protected Cat() {
-    }
-
+    protected Cat() {}
 
     public Object getId() {
         return id;
