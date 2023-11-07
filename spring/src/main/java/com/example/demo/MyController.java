@@ -19,6 +19,19 @@ public class MyController {
         return this.service.getRepositoryByName(name);
     }
 
+    @GetMapping("cat/{name}")
+    public Cat getCatByNameAndAge(
+            @PathVariable("name") String name, int age
+    ) {
+        return this.service.getRepositoryByNameAndAge(name, age);
+    }
+    @GetMapping("cat/{name}")
+    public Cat getCatById(
+            @PathVariable("name") int id
+    ) {
+        return this.service.findCatById(id);
+    }
+
     @PostMapping("cat/add")
     public void addCatToRepository(
             @RequestBody Cat cat) {
@@ -33,8 +46,10 @@ public class MyController {
 
     @DeleteMapping("cat/delete/{name}")
     public void deleteCatInRepository(
-            @PathVariable String name) {
-        this.service.deleteCatFromRepository(name);
+            @PathVariable String name, int age) {
+        this.service.deleteCatFromRepository(name, age);
     }
+
+
 
 }

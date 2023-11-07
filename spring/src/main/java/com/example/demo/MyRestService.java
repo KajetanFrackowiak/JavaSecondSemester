@@ -2,8 +2,10 @@ package com.example.demo;
 
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
-public class MyRestService {
+public class MyRestService extends CatExceptionHandler{
     CatRepository repository;
 
 
@@ -15,31 +17,54 @@ public class MyRestService {
 
 
     public Cat getRepositoryByName(String name) {
-        return this.repository.findByName(name);
+
+        Optional<Cat> nameCat = Optional.ofNullable(this.repository.findByName(name));
+
+        if (nameCat.isPresent()) {
+            return this.repository.findByName(name);
+        } else throw new CatNotFoundException();
+    }
+
+    public Cat getRepositoryByNameAndAge(String name, int age) {
+
+        Optional<Cat> nameCat = Optional.ofNullable(this.repository.findCatByNameAndAge(name, age));
+
+        if (nameCat.isPresent()) {
+            return this.repository.findCatByNameAndAge(name, age);
+        } else throw new CatNotFoundException();
     }
 
     public void addCatToRepository(Cat cat) {
         repository.save(cat);
     }
+    public Cat findCatById(int id) {
+
+        Optional<Cat> nameCat = Optional.ofNullable(this.repository.findCatById(id));
+
+        if (nameCat.isPresent()) {
+            return this.repository.findCatById(id);
+        } else throw new CatNotFoundException();
+    }
 
     public void updateCatByName(String name, Cat updatedCat) {
         Cat existingCat = repository.findByName(name);
+        Optional<Cat> updateCat = Optional.ofNullable(this.repository.findByName(name));
 
-        if (existingCat != null) {
+        if (updateCat.isPresent()) {
             existingCat.setName(updatedCat.getName());
             existingCat.setAge(updatedCat.getAge());
-
             repository.save(existingCat);
-        }
+        } else throw new CatNotFoundException();
     }
 
 
-    public void deleteCatFromRepository(String name) {
-        Cat existingCat = repository.findByName(name);
+    public void deleteCatFromRepository(String name, int age) {
+        Cat existingCat = repository.findCatByNameAndAge(name, age);
+        Optional<Cat> updateCat = Optional.ofNullable(repository.findCatByNameAndAge(name, age));
 
-        if (existingCat != null) {
+        if (updateCat.isPresent()) {
             repository.delete(existingCat);
-        }
+        } else throw new CatNotFoundException();
     }
 
 }
