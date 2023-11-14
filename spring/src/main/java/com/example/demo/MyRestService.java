@@ -35,8 +35,14 @@ public class MyRestService extends CatExceptionHandler{
     }
 
     public void addCatToRepository(Cat cat) {
-        repository.save(cat);
-    }
+        Cat myCat = this.repository.findCatByNameAndAge(cat.getName(), cat.getAge());
+
+        if (myCat ==  null) {
+            repository.save(cat);
+        } else {
+            throw new CatFoundException();
+        }
+    }  // post
     public Cat findCatById(int id) {
 
         Optional<Cat> nameCat = Optional.ofNullable(this.repository.findCatById(id));

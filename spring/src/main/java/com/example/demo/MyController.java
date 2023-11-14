@@ -50,6 +50,4 @@ public class MyController {
         this.service.deleteCatFromRepository(name, age);
     }
 
-
-
 }

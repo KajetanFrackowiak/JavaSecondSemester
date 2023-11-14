@@ -3,18 +3,26 @@ package com.example.demo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class CatServiceTest {
+    private MockMvc mockMvc;
     @Mock
     private CatRepository repository;
     private AutoCloseable openMocks;
     private MyRestService myRestService;
+
+
 
     @BeforeEach
     public void init() {
@@ -27,14 +35,35 @@ public class CatServiceTest {
         openMocks.close();
     }
 
+    @InjectMocks
+    private MyController controller;
+
+    @BeforeEach
+    public void setup() {
+        this.mockMvc = MockMvcBuilders.standaloneSetup(
+                new CatExceptionHandler(), controller).build();
+    }
+
+    @Test
+    public void getByIdReturns200WhenCatIsPresent() throws Exception {
+        Cat cat = new Cat(4, "Igorek");
+        when(repository.findById(4)).thenReturn(Optional.of(cat));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/cat/get/4"))
+                .andExpect(jsonPath("$.get").value(4))
+                .andExpect(jsonPath("$.name").value("Igorek"))
+                .andExpect(status().isOk());
+    }
+
+
     @Test
     public void findFinds() {
         String name = "Rafiki";
         Cat cat = new Cat(20, name);
-        Mockito.when(repository.findByName(name)).thenReturn(cat);
+        when(repository.findByName(name)).thenReturn(cat);
 
         Cat result = myRestService.getRepositoryByName(name);
-        assertEquals(null, result);
+        assertNull(result);
     }
 
     @Test
@@ -43,7 +72,7 @@ public class CatServiceTest {
         int age = 4;
         Cat cat = new Cat(age, name);
             ArgumentCaptor<Cat> captor = ArgumentCaptor.forClass(Cat.class);
-            Mockito.when(repository.save(captor.capture())).thenReturn(cat);
+            when(repository.save(captor.capture())).thenReturn(cat);
 
             myRestService.addCatToRepository(cat);
             Mockito.verify(repository, Mockito.times(1))
@@ -52,4 +81,29 @@ public class CatServiceTest {
             assertEquals(cat, catFromSaveCall);
 
     }
+
+    @Test
+    public void catAddThrowExceptionWhenCatIsPresent() {
+        Cat cat = new Cat(4, "Rafiki");
+        cat.setId(2);
+
+        when(repository.findById(2)).thenReturn(Optional.of(cat));
+
+        assertThrows(CatFoundException.class, () -> {
+        myRestService.addCatToRepository(cat);
+        });
+
+    }
+    @Test
+    public void catUpdateThrowExceptionWhenCatIsPresent() {
+        Cat cat = new Cat(5, "Guar");
+        cat.setId(3);
+
+        Cat catWithUpdate = new Cat(10, "Kapi");
+
+        when(repository.findById(10)).thenReturn(Optional.of(cat));
+        assertThrows(CatNotFoundException.class, () -> myRestService.updateCatByName(cat.getName(), catWithUpdate));
+    }
+
+
 }
