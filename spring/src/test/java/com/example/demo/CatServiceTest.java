@@ -4,13 +4,17 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.awt.*;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -76,7 +80,7 @@ public class CatServiceTest {
 
             myRestService.addCatToRepository(cat);
             Mockito.verify(repository, Mockito.times(1))
-                    .save(Mockito.any());
+                    .save(any());
             Cat catFromSaveCall = captor.getValue();
             assertEquals(cat, catFromSaveCall);
 
@@ -105,5 +109,15 @@ public class CatServiceTest {
         assertThrows(CatNotFoundException.class, () -> myRestService.updateCatByName(cat.getName(), catWithUpdate));
     }
 
+    @Test
+    public void check400IsReturnedWhenCatisAlreadyThere() throws  Exception {
+        doThrow(new CatFoundException()).when(myRestService).addCatToRepository(any());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/cat/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\": \"Kapi\", \"age\": 3}")
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+    }
 
 }

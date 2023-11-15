@@ -32,7 +32,7 @@ public class MyController {
         return this.service.findCatById(id);
     }
 
-    @PostMapping("cat/add")
+    @PostMapping("cat/add") // <--
     public void addCatToRepository(
             @RequestBody Cat cat) {
         this.service.addCatToRepository(cat);
