@@ -2,7 +2,10 @@ package com.example.demo;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class MyRestService extends CatExceptionHandler{
@@ -73,4 +76,11 @@ public class MyRestService extends CatExceptionHandler{
         } else throw new CatNotFoundException();
     }
 
+    public List<Cat> filterByName(String name) {
+        return StreamSupport.stream(repository.findAll().spliterator(), false)
+                .filter(cat -> {
+                    return cat.getName().contains(name);
+                })
+                .collect(Collectors.toList());
+    }
 }

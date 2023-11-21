@@ -3,6 +3,8 @@ package com.example.demo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class MyController {
 
@@ -38,7 +40,7 @@ public class MyController {
         this.service.addCatToRepository(cat);
     }
 
-    @PutMapping("/cat/update/{name}")
+    @PutMapping("/cat/update")//{name}
     public void updateCatInRepository(@PathVariable String name, @RequestBody Cat updatedCat) {
         service.updateCatByName(name, updatedCat);
     }
@@ -50,4 +52,9 @@ public class MyController {
         this.service.deleteCatFromRepository(name, age);
     }
 
+    @GetMapping("cat/filterByName")
+    public List<Cat> filterByName(
+            @PathVariable String name) {
+        return this.service.filterByName(name);
+    }
 }
