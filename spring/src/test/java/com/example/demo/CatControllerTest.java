@@ -24,7 +24,7 @@ public class CatControllerTest
     private MockMvc mockMvc;
 
     @Mock
-    private MyRestService myRestService;
+    private CatService catService;
     private AutoCloseable openMocks;
     @InjectMocks
     private MyController controller;
@@ -32,7 +32,7 @@ public class CatControllerTest
     @BeforeEach
     public void setup() {
         openMocks = MockitoAnnotations.openMocks(this);
-        controller = new MyController(myRestService);
+        controller = new MyController(catService);
         this.mockMvc = MockMvcBuilders.standaloneSetup(
                 new CatExceptionHandler(), controller).build();
     }
@@ -42,7 +42,7 @@ public class CatControllerTest
     }
     @Test
     public void check400IsReturnedWhenCatisAlreadyThere() throws  Exception {
-        doThrow(new CatFoundException()).when(myRestService).addCatToRepository(any());
+        doThrow(new CatFoundException()).when(catService).addCatToRepository(any());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/cat/add")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -54,7 +54,7 @@ public class CatControllerTest
     @Test
     public void getByIdReturns200WhenCatIsPresent() throws Exception {
         Cat cat = new Cat(4, "Igorek");
-        when(myRestService.findById(4)).thenReturn(Optional.of(cat));
+        when(catService.findCatById(4)).thenReturn(cat);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/cat/get/4"))
                 .andExpect(jsonPath("$.get").value(4))

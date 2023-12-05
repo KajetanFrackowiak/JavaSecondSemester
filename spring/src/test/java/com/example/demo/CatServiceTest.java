@@ -17,12 +17,12 @@ public class CatServiceTest {
     @Mock
     private CatRepository repository;
     private AutoCloseable openMocks;
-    private MyRestService myRestService;
+    private CatService catService;
 
     @BeforeEach
     public void init() {
         openMocks = MockitoAnnotations.openMocks(this);
-        myRestService = new MyRestService(repository);
+        catService = new CatService(repository);
     }
 
     @AfterEach
@@ -36,7 +36,7 @@ public class CatServiceTest {
         Cat cat = new Cat(20, name);
         when(repository.findByName(name)).thenReturn(cat);
 
-        Cat result = myRestService.getRepositoryByName(name);
+        Cat result = catService.getRepositoryByName(name);
         assertNull(result);
     }
 
@@ -48,7 +48,7 @@ public class CatServiceTest {
             ArgumentCaptor<Cat> captor = ArgumentCaptor.forClass(Cat.class);
             when(repository.save(captor.capture())).thenReturn(cat);
 
-            myRestService.addCatToRepository(cat);
+            catService.addCatToRepository(cat);
             Mockito.verify(repository, Mockito.times(1))
                     .save(any());
             Cat catFromSaveCall = captor.getValue();
@@ -64,7 +64,7 @@ public class CatServiceTest {
         when(repository.findById(2)).thenReturn(Optional.of(cat));
 
         assertThrows(CatFoundException.class, () -> {
-        myRestService.addCatToRepository(cat);
+        catService.addCatToRepository(cat);
         });
 
     }
@@ -76,7 +76,7 @@ public class CatServiceTest {
         Cat catWithUpdate = new Cat(10, "Kapi");
 
         when(repository.findById(10)).thenReturn(Optional.of(cat));
-        assertThrows(CatNotFoundException.class, () -> myRestService.updateCatByName(cat.getName(), catWithUpdate));
+        assertThrows(CatNotFoundException.class, () -> catService.updateCatByName(cat.getName(), catWithUpdate));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class CatServiceTest {
 
         when(repository.findAll()).thenReturn(allCats);
 
-       List<Cat> result1 = myRestService.filterByName("Puszek");
+       List<Cat> result1 = catService.filterByName("Puszek");
 
        assertEquals(List.of(puszek, puszekOkruszek), result1);
     }

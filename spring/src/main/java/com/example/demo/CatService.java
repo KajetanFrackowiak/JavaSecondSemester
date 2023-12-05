@@ -8,11 +8,11 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class MyRestService extends CatExceptionHandler{
+public class CatService extends CatExceptionHandler{
     CatRepository repository;
 
 
-    public MyRestService(CatRepository repository) {
+    public CatService(CatRepository repository) {
         this.repository = repository;
         this.repository.save(new Cat(5, "Erwin"));
         this.repository.save(new Cat(10, "Schrodinger"));
@@ -46,6 +46,9 @@ public class MyRestService extends CatExceptionHandler{
             throw new CatFoundException();
         }
     }  // post
+    public Iterable<Cat> findAll() {
+        return repository.findAll();
+    }
     public Cat findCatById(int id) {
 
         Optional<Cat> nameCat = Optional.ofNullable(this.repository.findCatById(id));

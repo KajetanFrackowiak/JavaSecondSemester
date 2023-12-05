@@ -1,6 +1,5 @@
 package com.example.demo;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -8,25 +7,25 @@ import java.util.List;
 @RestController
 public class MyController {
 
-    private MyRestService service;
+    private final CatService service;
 
-    public MyController(MyRestService service) {
+    public MyController(CatService service) {
         this.service = service;
     }
 
-    @GetMapping("cat/{name}")
-    public Cat getCatByName(
-            @PathVariable("name") String name
-    ) {
-        return this.service.getRepositoryByName(name);
-    }
+//    @GetMapping("cat/{name}")
+//    public Cat getCatByName(
+//            @PathVariable("name") String name
+//    ) {
+//        return this.service.getRepositoryByName(name);
+//    }
 
-    @GetMapping("cat/{name}")
-    public Cat getCatByNameAndAge(
-            @PathVariable("name") String name, int age
-    ) {
-        return this.service.getRepositoryByNameAndAge(name, age);
-    }
+//    @GetMapping("cat/{name}")
+//    public Cat getCatByNameAndAge(
+//            @PathVariable("name") String name, int age
+//    ) {
+//        return this.service.getRepositoryByNameAndAge(name, age);
+//    }
     @GetMapping("cat/{name}")
     public Cat getCatById(
             @PathVariable("name") int id
