@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <title>Title</title>
 <body>
-<p>Editing CatL [[$cat.id]]</p>
+<p>Editing Cat</p>
 <form action="#" th:object="${cat}" th:action="@{/editCat}" method="POST">
     <input hidden th:field="*{id}" th:value="*{id}">
     <div>
         <label>Name</label>
-        <input th:field="*{name}" type="input" name="name" th:value="*{name}" required>
+        <input id="nameInput" th:field="*{name}" type="input" name="name" th:value="*{name}" required>
     </div>
     <div>
         <label>Age</label>
-        <input th:field="*{age}" type="input" name="age" th:value="*{age}" required>
+        <input id="ageInput" th:field="*{age}" type="input" name="age" th:value="*{age}" required>
     </div>
     <button type="submit">edit</button>
 </form>
